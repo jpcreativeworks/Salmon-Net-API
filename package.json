@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "apollo-server-express": "^3.8.1",
+    "express": "^4.18.1",
+    "graphql": "^16.5.0",
+    "mongoose": "^6.3.4"
+  },
+  "name": "salmon-net-api",
+  "description": "## Description: This is code for a structure build of the API social network. How salmon travel upstream on highways of water in search for a match, the information travels on a middleware highway of information while making calls to the API. That is why it is named Salmon Net.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jpcreativeworks/Salmon-Net-API.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jpcreativeworks/Salmon-Net-API/issues"
+  },
+  "homepage": "https://github.com/jpcreativeworks/Salmon-Net-API#readme"
+}
