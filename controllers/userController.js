@@ -1,12 +1,13 @@
 const { ObjectId } = require('mongoose').Types;
-const { Thought, User } = require('../models');
+const { Thoughts, Users } = require('../models');
 
 
-const userController = {
+module.exports = {
     getUsers(req, res){
-        User.find({})
+        console.log('touched the line 7 userController!');
+        Users.find({})
         .populate({
-            path: 'Thought',
+            path: 'Thoughts',
             select: ('-__v')
         })
         // .populate({
@@ -24,9 +25,9 @@ const userController = {
           });
     },
     getSingleUser(req, res) {
-        User.findOne({ _id: req.params.userId })
+        Users.findOne({ _id: req.params.userId })
         .populate({
-            path: 'Thought',
+            path: 'Thoughts',
             select: ('-__v')
         })
         .select('-__v') 
@@ -45,16 +46,16 @@ const userController = {
           });
     },
     createUser(req, res) {
-        User.create(req.body)
+        Users.create(req.body)
         .then((userData) => res.json(userData))
         .catch((err) => res.status(500).json(err));
     },
     deleteUser(req, res) {
-        User.findOneAndDelete({ _id:req.parama.userId})
+        Users.findOneAndDelete({ _id:req.parama.userId})
             .then((userData) => 
             !userData
                 ? res.status(404).json({ message: 'no user exists'})
-                : User.findOneAndUpdate(
+                : Users.findOneAndUpdate(
                     {userId: userData.userId},
                     // {$in: { userData.friends } },
                     // {$pull: { friends:params.userId} }
@@ -63,7 +64,7 @@ const userController = {
                 )
             )
             .then((thoughts) => {
-                Thought.deleteMany({ user: userData.user })            
+                Thoughts.deleteMany({ user: userData.user })            
             !thoughts
                 ? res.status(404).json({
                     message: 'user deleted, no thoughts to think about',
@@ -81,7 +82,7 @@ const userController = {
     
     },
     updatingUser (req, res) {
-        User.findOneAndUpdate(
+        Users.findOneAndUpdate(
             { _id: req.params.userId }, 
             body, 
             { new: true }
@@ -96,6 +97,6 @@ const userController = {
                 res.status(500).json(err);
             })
         },
-        addAsFriend
+        // addAsFriend
 
     }

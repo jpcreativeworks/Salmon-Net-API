@@ -1,6 +1,7 @@
+const { Thought, User } = require('../../models')
 const router = require('express').Router();
 const {
-  getUser,
+  getUsers,
   getSingleUser,
   createUser,
   updatingUser,
@@ -8,7 +9,7 @@ const {
 } = require('../../controllers/userController.js');
 
 
-router.route('/').get(getUser).post(createUser);
+router.route('/').get(getUsers).post(createUser);
 
 
 router
