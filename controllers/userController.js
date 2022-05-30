@@ -7,13 +7,13 @@ const userController = {
         User.find({})
         .populate({
             path: 'Thought',
-            select: ('V__-')
+            select: ('-__v')
         })
-        .populate({
-            path:'friends',
-            select: ('V__-')
-        })
-        .select('V__-')
+        // .populate({
+        //     path:'friends',
+        //     select: ('-__v')
+        // })
+        .select('-__v')
         .sort({ _id: -1 })
         .then(userData => {         
            res.json(userData)
@@ -27,15 +27,16 @@ const userController = {
         User.findOne({ _id: req.params.userId })
         .populate({
             path: 'Thought',
-            select: ('V__-')
+            select: ('-__v')
         })
-        .select('v__-') 
+        .select('-__v') 
         .then((userData) => // may need async here
-        !user   ? res.status(404).json({ message: 'no user matches that id' })
+        !userData   
+        ? res.status(404).json({ message: 'no user matches that id' })
         : res.json({
             userData,
-            Thought: req.params.userId
-            
+            // Thought: req.params.userId
+            // may need to remove { }
             })
         )
         .catch((err) => {
@@ -45,31 +46,56 @@ const userController = {
     },
     createUser(req, res) {
         User.create(req.body)
-        .then((user) => res.json(user))
+        .then((userData) => res.json(userData))
         .catch((err) => res.status(500).json(err));
     },
     deleteUser(req, res) {
-        User.findOneAndRemove({ _id:req.parama.userId})
-            .then((user) => 
-            !user
+        User.findOneAndDelete({ _id:req.parama.userId})
+            .then((userData) => 
+            !userData
                 ? res.status(404).json({ message: 'no user exists'})
                 : User.findOneAndUpdate(
-                    {user: req.params.userId},
-                    {$pull: { user: req.params.sudentId } },
+                    {userId: userData.userId},
+                    // {$in: { userData.friends } },
+                    // {$pull: { friends:params.userId} }
+                    {$pull: { user: req.params.userId } },
                     { new: true }
                 )
             )
-            .then((thoughts) =>
+            .then((thoughts) => {
+                Thought.deleteMany({ user: userData.user })            
             !thoughts
                 ? res.status(404).json({
                     message: 'user deleted, no thoughts to think about',
                     })
-                :res.json({ message: 'user was deleted'})
-                )
+                : res.json({ message: 'user was deleted'})
+                })
                 .catch((err) => {
                     console.log(err);
                     res.status(500).json(err);
-                });
+                })
+            .catch((err) => {
+            console.log(err);
+            res.status(500).json(err);
+        })
+    
     },
+    updatingUser (req, res) {
+        User.findOneAndUpdate(
+            { _id: req.params.userId }, 
+            body, 
+            { new: true }
+            )
+            .then(userData => {
+                !userData
+                ? res.status(404).json({ message: 'No user found, unable to update'})
+                : res.json({ message: 'all done updating user'}).console.log(new userData);
+            })
+            .catch((err) => {
+                console.log(err)
+                res.status(500).json(err);
+            })
+        },
+        addAsFriend
 
-}
+    }
