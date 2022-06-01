@@ -18,16 +18,14 @@ connection.once('open', async () => {
         const email = getEmail(i); 
         user.push({
             userName: userName,
-            email: email,
-            // friends: friends,
+            email: email,            
         })
         const thoughts = [];
         for (let j = 0; j < 2; j++) {
             
             thoughts.push({
                 thoughtText: getRandomThought(),
-                userName: userName,
-            // reactions: reactions,          
+                userName: userName,                        
             })
         }
         await Thoughts.collection.insertMany(thoughts);

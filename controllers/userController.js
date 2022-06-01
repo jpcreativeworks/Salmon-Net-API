@@ -6,16 +6,7 @@ const User = require('../models/Users');
 
 module.exports = {
     getUsers(req, res){
-        console.log('touched the line 7 userController!');
-        Users.find({})
-        // .populate({
-        //     path: 'Thoughts',
-        //     select: ('-__v')
-        // })
-        // .populate({
-        //     path:'friends',
-        //     select: ('-__v')
-        // })
+        Users.find({})        
         .select('-__v')
         .sort({ _id: -1 })
         .then(userData => {         
@@ -27,20 +18,12 @@ module.exports = {
           });
     },
     getSingleUser(req, res) {
-        Users.findOne({ _id: req.params.userId })
-        // .populate({
-        //     path: 'Thoughts',
-        //     select: ('-__v')
-        // })
+        Users.findOne({ _id: req.params.userId })        
         .select('-__v') 
-        .then((userData) => // may need async here
+        .then((userData) => 
         !userData   
         ? res.status(404).json({ message: 'no user matches that id' })
-        : res.json({
-            userData,
-            // Thought: req.params.userId
-            // may need to remove { }
-            })
+        : res.json({ userData })
         )
         .catch((err) => {
             console.log(err);
@@ -57,13 +40,7 @@ module.exports = {
             .then((userData) => 
             !userData
                 ? res.status(404).json({ message: 'no user exists'})
-                : Thoughts.deleteMany(
-                    {userName: { $in: userData.userName } },
-                    // {$in: { userData.friends } },
-                    // {$pull: { friends:params.userId} }
-                    // {$pull: { userName: req.params.userId } },
-                    // { new: true }
-                )
+                : Thoughts.deleteMany({userName: { $in: userData.userName } })
                 .then((thoughts) => 
                 !thoughts
                     ? res.status(404).json({

@@ -15,20 +15,20 @@ This is code for a structure build of the API social network. How salmon travel 
 * [License](#license)
 
 #### Installation:
-Node.js,Visual Studio Code
+Express, Mongoose, Insomnia, Visual Studio Code
 
 #### Contributers
 Trilogy Learning & University of Arizona
 
 #### Instructions
-run npm i
+run npm i, run your seeds and run start. 
 
 #### Requirements
 test the routes in postman or insomnia. 
 
 #### Links
-[github]()
-[youtube]()
+[github](https://github.com/jpcreativeworks/Salmon-Net-API.git)
+[youtube](https://youtu.be/V2Vw0VDAeb0)
 
 #### License
 ![Badge](https://img.shields.io/badge/license-MIT-green.svg)
