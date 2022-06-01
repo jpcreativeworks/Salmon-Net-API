@@ -24,7 +24,7 @@ module.exports = {
     },
     createThoughts(req, res) {
         Thoughts.create(req.body)
-        .then((course) => res.json(thoughts))
+        .then((thoughts) => res.json(thoughts))
         .catch((err) =>{
             console.log(err);
             return res.status(500).json(err);
