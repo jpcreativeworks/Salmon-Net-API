@@ -3,8 +3,14 @@ const { Thoughts, Users } = require('../models');
 module.exports = {
     getAllThoughts(req, res) {
         Thoughts.find()
-        .then((thoughts) => res.json(thoughts))
-        .catch((err) => res.status(500).json(err));
+        .then((thoughts) => {
+            // console.log('find thoughts', thoughts);
+            return res.json(thoughts)          
+        })
+        .catch((err) => {
+            console.log(err); 
+            res.status(500).json(err)
+        });
     },
     getaThought(req, res) {
         Thoughts.findOne({_id: req.params.thoughtId })
