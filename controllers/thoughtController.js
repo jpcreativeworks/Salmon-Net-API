@@ -32,21 +32,22 @@ module.exports = {
     },
     updateThought(req, res) {
         Thoughts.findOneAndUpdate(
-            {_id: req.params.thoughtId },
+            {_id: req.params.id },
             {$set: req.body},
             { runValidators: true, new: true }
         )
         .then((thoughts) =>
         !thoughts
         ? res.status(404).json({ message: 'That thought couldnt be updated'})
-        : res.json(course)
+        : res.json(thoughts)
         )
         .catch((err) => res.status(500).json(err));
     },
     deleteThought(req, res) {
-        Thoughts.findOneAndDelete({ _id:req.params.courseId })
+        Thoughts.findOneAndDelete({ _id:req.params.id })
             .then((thoughts) =>
-            !thoughts   ?res.status(404).json({ message: 'Thought about it and decided not to delete that thought'})
+            !thoughts   
+            ? res.status(404).json({ message: 'Thought about it and decided not to delete that thought'})
             : Users.deleteMany({ _id: { $in: thoughts.user } })
             )
             .then(() => res.json({ message: 'That thought has been unthunk'}))
