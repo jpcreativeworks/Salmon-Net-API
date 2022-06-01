@@ -13,8 +13,8 @@ module.exports = {
         });
     },
     getaThought(req, res) {
-        Thoughts.findOne({_id: req.params.thoughtId })
-        .select(`${thoughtId}`)
+        Thoughts.findOne({_id: req.params.id })
+        
         .then((thoughts) =>
         !thoughts
             ? res.status(404).json({ message: 'no one thought of that yet' })
