@@ -1,15 +1,17 @@
 const { ObjectId } = require('mongoose').Types;
+const req = require('express/lib/request');
 const { Thoughts, Users } = require('../models');
+const User = require('../models/Users');
 
 
 module.exports = {
     getUsers(req, res){
         console.log('touched the line 7 userController!');
         Users.find({})
-        .populate({
-            path: 'Thoughts',
-            select: ('-__v')
-        })
+        // .populate({
+        //     path: 'Thoughts',
+        //     select: ('-__v')
+        // })
         // .populate({
         //     path:'friends',
         //     select: ('-__v')
@@ -26,10 +28,10 @@ module.exports = {
     },
     getSingleUser(req, res) {
         Users.findOne({ _id: req.params.userId })
-        .populate({
-            path: 'Thoughts',
-            select: ('-__v')
-        })
+        // .populate({
+        //     path: 'Thoughts',
+        //     select: ('-__v')
+        // })
         .select('-__v') 
         .then((userData) => // may need async here
         !userData   
@@ -51,30 +53,29 @@ module.exports = {
         .catch((err) => res.status(500).json(err));
     },
     deleteUser(req, res) {
-        Users.findOneAndDelete({ _id:req.parama.userId})
+        Users.findOneAndDelete({ _id:req.params.userId})
             .then((userData) => 
             !userData
                 ? res.status(404).json({ message: 'no user exists'})
-                : Users.findOneAndUpdate(
-                    {userId: userData.userId},
+                : Thoughts.deleteMany(
+                    {userName: { $in: userData.userName } },
                     // {$in: { userData.friends } },
                     // {$pull: { friends:params.userId} }
-                    {$pull: { user: req.params.userId } },
-                    { new: true }
+                    // {$pull: { userName: req.params.userId } },
+                    // { new: true }
                 )
-            )
-            .then((thoughts) => {
-                Thoughts.deleteMany({ user: userData.user })            
-            !thoughts
-                ? res.status(404).json({
-                    message: 'user deleted, no thoughts to think about',
+                .then((thoughts) => 
+                !thoughts
+                    ? res.status(404).json({
+                     message: 'user deleted, no thoughts to think about',
                     })
-                : res.json({ message: 'user was deleted'})
-                })
+                    : res.json({ message: 'user was deleted'})
+                ) 
                 .catch((err) => {
                     console.log(err);
                     res.status(500).json(err);
                 })
+            )
             .catch((err) => {
             console.log(err);
             res.status(500).json(err);
@@ -83,20 +84,77 @@ module.exports = {
     },
     updatingUser (req, res) {
         Users.findOneAndUpdate(
-            { _id: req.params.userId }, 
-            body, 
+            { _id: req.params.userId },
+            {$set: req.body},             
             { new: true }
             )
             .then(userData => {
                 !userData
                 ? res.status(404).json({ message: 'No user found, unable to update'})
-                : res.json({ message: 'all done updating user'}).console.log(new userData);
+                : res.json({ message: 'all done updating user'});
+                console.log(new userData);
             })
             .catch((err) => {
                 console.log(err)
                 res.status(500).json(err);
             })
-        },
-        // addAsFriend
-
+    },
+    addAsFriend (req, res) {
+        Users.findOneAndUpdate(
+            {_id: req.params.userId },
+            {$addToSet: {friends: req.params.friendId}},             
+            { new: true }
+        )
+        .then(
+            userData => {
+                !userData
+                ? res.status(404).json({ message: 'No user found, unable to update'})
+                : Users.findOneAndUpdate(
+                    {_id: req.params.friendId },
+                    {$addToSet: {friends: req.params.userId}},             
+                    { new: true }
+                )
+                .then(
+                    userData => {
+                        !userData
+                        ? res.status(404).json({ message: 'No user found, unable to update'})
+                        : res.json('Friends Added!')
+                    }
+                )
+            })
+        .catch((err) => {
+            console.log(err)
+            res.status(500).json(err);
+        })
+    },
+    removeFriend(req, res) {
+        Users.findOneAndUpdate(
+            {_id: req.params.userId },
+            {$pull: {friends: req.params.friendId}},             
+            { new: true }
+        )
+        .then(
+            userData => {
+                !userData
+                ? res.status(404).json({ message: 'No user found, unable to update'})
+                : Users.findOneAndUpdate(
+                    {_id: req.params.friendId },
+                    {$pull: {friends: req.params.userId}},             
+                    { new: true }
+                )
+                .then(
+                    userData => {
+                        !userData
+                        ? res.status(404).json({ message: 'No user found, unable to update'})
+                        : res.json('Friends Removed!')
+                    }
+                )
+            })
+        .catch((err) => {
+            console.log(err)
+            res.status(500).json(err);
+        })
     }
+
+}
+    
